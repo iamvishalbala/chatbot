@@ -18,35 +18,33 @@ def get_gemini_response(question):
     return response
 
 # Initialize Streamlit app
-st.set_page_config(page_title="Chatbot AI", page_icon=":robot_face:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Chatbot", page_icon=":robot_face:", layout="wide", initial_sidebar_state="collapsed")
 
 # Set white theme
 st.markdown(
 """
 <style>
-    .css-1sbpqpq {
-        background-color: #FFFFFF; /* white background */
-    }
-    .css-17eq0hr {
-        color: #000000; /* black text color */
+    body {
+        color: black;
+        background-color: white;
     }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("Chatbot AI")
+st.title("Chatbot")
 
 # Initialize session state for chat history if it doesn't exist
 if 'chat_history' not in st.session_state:
     st.session_state['chat_history'] = []
 
 # Input field for queries
-input_text = st.text_input("Ask me anything:", key="input")
+input_text = st.text_input("Query:", key="input")
 
 # Button to submit query
-submit_button = st.button("Send")
+submit_button = st.button("Ask")
 
 # Button to view chat history
-history_button = st.button("View Chat History")
+history_button = st.button("History")
 
 if submit_button and input_text:
     # Get response from Gemini
