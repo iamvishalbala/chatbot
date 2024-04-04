@@ -5,44 +5,59 @@ import streamlit as st
 import os
 import google.generativeai as genai
 
+# Configure Google API
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-## function to load Gemini Pro model and get repsonses
-model=genai.GenerativeModel("gemini-pro") 
+# Initialize Gemini Pro model
+model = genai.GenerativeModel("gemini-pro") 
 chat = model.start_chat(history=[])
+
+# Function to get Gemini's response
 def get_gemini_response(question):
-    
-    response=chat.send_message(question,stream=True)
+    response = chat.send_message(question, stream=True)
     return response
 
-##initialize our streamlit app
+# Initialize Streamlit app
+st.set_page_config(page_title="Chatbot AI", page_icon=":robot_face:", layout="wide", initial_sidebar_state="collapsed")
 
-st.set_page_config(page_title="chatbot AI")
+# Set white theme
+st.markdown(
+"""
+<style>
+    .css-1sbpqpq {
+        background-color: #FFFFFF; /* white background */
+    }
+    .css-17eq0hr {
+        color: #000000; /* black text color */
+    }
+</style>
+""", unsafe_allow_html=True)
 
-st.header("Chatbot AI")
+st.title("Chatbot AI")
 
 # Initialize session state for chat history if it doesn't exist
 if 'chat_history' not in st.session_state:
     st.session_state['chat_history'] = []
 
-input=st.text_input("Queries: ",key="input")
-submit=st.button("Ask the AI")
-history=st.button("Chat History")
-if submit and input:
-    response=get_gemini_response(input)
-    # Add user query and response to session state chat history
-    st.session_state['chat_history'].append(("You", input))
-    st.subheader("Answer for your queries:")
+# Input field for queries
+input_text = st.text_input("Ask me anything:", key="input")
+
+# Button to submit query
+submit_button = st.button("Send")
+
+# Button to view chat history
+history_button = st.button("View Chat History")
+
+if submit_button and input_text:
+    # Get response from Gemini
+    response = get_gemini_response(input_text)
+    st.subheader("Answer for your query:")
     for chunk in response:
         st.write(chunk.text)
+        st.session_state['chat_history'].append(("You", input_text))
         st.session_state['chat_history'].append(("Bot", chunk.text))
-# st.subheader("The Chat History is")
-    
-# for role, text in st.session_state['chat_history']:
-#     st.write(f"{role}: {text}")
-    
 
-if history:
-    st.subheader("Your's Chat History :") 
+if history_button:
+    st.subheader("Your Chat History:") 
     for role, text in st.session_state['chat_history']:
         st.write(f"{role}: {text}")
